@@ -133,6 +133,8 @@ def validate_one_region(mp):
         lsTr.append(tr)
     print "nodes:", len(lsNodes)
     print "tr:", len(lsTr)
+
+    
     return True
 
 if __name__ == '__main__':
