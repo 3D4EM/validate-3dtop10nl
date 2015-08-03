@@ -108,13 +108,12 @@ def validate_triangles(lsPolys):
 def validate_regions(lsPolys):
     #-- validate individually each top10 polygon
     invalidmp = 0
-    toprocess = [7,8]
+    toprocess = range(100)
     for i in toprocess:
     # for i in range(len(lsPolys)):
         print "----------- Validate MultiPolygon #%d ----------" % (i)
         if (validate_one_region(lsPolys[i]) == False):
             invalidmp += 1
-        # sys.exit()
     print "\n"
     print "=" * 40
     print "# invalid region(s):", invalidmp
@@ -179,60 +178,20 @@ def validate_one_region(mp):
                 else:
                     d[k] = -1
 
-    # boundaryids = []
-    # for k in d:
-    #     if ( (d[k] == -1) or (d[k] == 1) ):
-    #         boundaryids.append(k)
-    # print boundaryids
-
-
-
-
-    boundary = []
-    for each in boundaryids:
+    tmp = []
+    for k in d:
+        if ( (d[k] == -1) or (d[k] == 1) ):
+            tmp.append(k)
+    boundaryedges = []
+    for each in tmp:
         t = each.split('-')
-        boundary.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
-
-    a = list(polygonize(boundary))    
-    print a
-    # print a[0]
-    # print a[1]
-    # if len(list(polygonize(boundary))) > 1:
-        # print "ERROR: disconnected area"
-        # isValid = False
-
-
-    # u = []
-    # for tr in lsTr:
-    #     # print lsNodes[tr[0]][0], lsNodes[tr[0]][1]
-    #     p = Polygon([(lsNodes[tr[0]][0], lsNodes[tr[0]][1]), 
-    #                  (lsNodes[tr[1]][0], lsNodes[tr[1]][1]), 
-    #                  (lsNodes[tr[2]][0], lsNodes[tr[2]][1])])
-    #     print p
-    #     u.append(p)
-    # print u
-    # re = cascaded_union(u)
-    # # print "empty?", re.is_empty
-    # print re
-    # # print type(re)
-    # # print list(re)
-
-    #-- try to GEOS polygonize() but that's a bit tricky actually
-    # boundaryids = []
-    # for k in d:
-    #     if ( (d[k] == -1) or (d[k] == 1) ):
-    #         boundaryids.append(k)
-    # boundary = []
-    # for each in boundaryids:
-    #     t = each.split('-')
-    #     boundary.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
-    # a = list(polygonize(boundary))    
-    # print a
-    # print a[0]
-    # print a[1]
-    # # if len(list(polygonize(boundary))) > 1:
-    #     # print "ERROR: disconnected area"
-    #     # isValid = False
+        boundaryedges.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
+    polygons = list(polygonize(boundaryedges))    
+    if len(polygons) > 1:
+        re = cascaded_union(polygons)  
+        if re.geom_type != 'Polygon':
+            print "ERROR: disconnected area"
+            isValid = False
 
     return isValid
 
