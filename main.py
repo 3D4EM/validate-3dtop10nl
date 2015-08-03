@@ -83,7 +83,6 @@ def main():
         # validate_triangles(lsPolys)
         # vertical_triangles(lsPolys)
         validate_regions(lsPolys)
-
         sys.exit()
 
 
@@ -109,15 +108,18 @@ def validate_triangles(lsPolys):
 def validate_regions(lsPolys):
     #-- validate individually each top10 polygon
     invalidmp = 0
-    toprocess = range(100)
-    for i in toprocess:
-    # for i in range(len(lsPolys)):
-        print "----------- Validate MultiPolygon #%d ----------" % (i)
+    invalidlist = []
+    # toprocess = range(100)
+    # for i in toprocess:
+    for i in range(len(lsPolys)):
+        # print "----------- Validate MultiPolygon #%d ----------" % (i)
         if (validate_one_region(lsPolys[i]) == False):
             invalidmp += 1
+            invalidlist.append(i)
     print "\n"
     print "=" * 40
     print "# invalid region(s):", invalidmp
+    print invalidlist
 
 
 def validate_one_triangle(tr):
