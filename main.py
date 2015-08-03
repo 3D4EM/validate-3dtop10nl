@@ -5,6 +5,7 @@ import math
 from shapely.geometry import Polygon
 from shapely.geometry import asShape
 from shapely.geometry import mapping
+from shapely.ops import polygonize
 
 
 INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
@@ -60,8 +61,9 @@ class Point3d:
         return Point(self.x, self.y, self.z)
 
 def main():
+    print "Input file", INFILE
     for l in LAYERS:
-        print "Processing", l
+        print "Processing layer '%s'" % l
         c = fiona.open(INFILE, 'r', driver='OpenFileGDB', layer=l)
 
         #-- store the geometries in a list (shapely objects)
@@ -76,9 +78,11 @@ def main():
         #     totaltr += len(mp)
         # print "# triangles:", totaltr
         
-        # validate_individual_triangles(lsPolys)
+        # validate_triangles(lsPolys)
         # vertical_triangles(lsPolys)
-        validate_individual_regions(lsPolys)
+        validate_regions(lsPolys)
+
+        sys.exit()
 
 
 def vertical_triangles(lsPolys):
@@ -90,7 +94,7 @@ def vertical_triangles(lsPolys):
     print "# vertical triangle(s):", verticaltr
 
     
-def validate_individual_triangles(lsPolys):
+def validate_triangles(lsPolys):
     #-- validate individually each triangle
     invalidtr = 0
     for mp in lsPolys:
@@ -100,14 +104,19 @@ def validate_individual_triangles(lsPolys):
     print "# invalid triangle(s):", invalidtr
 
 
-def validate_individual_regions(lsPolys):
+def validate_regions(lsPolys):
     #-- validate individually each top10 polygon
     invalidmp = 0
-    for mp in lsPolys:
-        if (validate_one_region(mp) == False):
+    toprocess = [57]
+    for i in toprocess:
+    # for i in range(len(lsPolys)):
+        print "----------- Validate MultiPolygon #%d ----------" % (i)
+        if (validate_one_region(lsPolys[i]) == False):
             invalidmp += 1
-        sys.exit()
-    print "# invalid area(s):", invalidtr
+        # sys.exit()
+    print "\n"
+    print "=" * 40
+    print "# invalid region(s):", invalidmp
 
 
 def validate_one_triangle(tr):
@@ -117,7 +126,9 @@ def validate_one_triangle(tr):
         return False
     return True
 
+
 def validate_one_region(mp):
+    isValid = True
     lsNodes = []
     lsTr = []
     for p in mp:
@@ -131,11 +142,70 @@ def validate_one_region(mp):
             else:
                 tr.append(lsNodes.index(temp))
         lsTr.append(tr)
-    print "nodes:", len(lsNodes)
-    print "tr:", len(lsTr)
-
     
-    return True
+    lsTr = remove_duplicate_triangles(lsTr)
+
+    # #-- fuck up the lsTr for testing purposes
+    # b = [ lsTr[4][0], lsTr[4][2], lsTr[4][1] ]
+    # lsTr.append(b)
+
+    d = {}
+    for tr in lsTr:
+        pairs = ( (0, 1), (1, 2), (2, 0) )
+        for each in pairs:
+            a = tr[each[0]]
+            b = tr[each[1]]
+            if (a < b): #-- good order
+                k = str(a) + "-" + str(b)
+                if k in d: 
+                    if d[k] == -1:
+                        d[k] = 0
+                    else:
+                        print "ERROR: duplicate edge"
+                        isValid = False
+                        d[k] = 999
+                else:
+                    d[k] = 1
+            else: #-- reverse order
+                k = str(b) + "-" + str(a)
+                if k in d: 
+                    if d[k] == 1:
+                        d[k] = 0
+                    else:
+                        print "ERROR: duplicate edge"
+                        isValid = False
+                        d[k] = 999
+                else:
+                    d[k] = -1
+
+    boundaryids = []
+    for k in d:
+        if ( (d[k] == -1) or (d[k] == 1) ):
+            boundaryids.append(k)
+    boundary = []
+    for each in boundaryids:
+        t = each.split('-')
+        boundary.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
+    a = list(polygonize(boundary))    
+    print type(a)
+    # if len(list(polygonize(boundary))) > 1:
+        # print "ERROR: disconnected area"
+        # isValid = False
+    return isValid
+
+
+def remove_duplicate_triangles(lsTr):
+    allduplicated = True
+    for i in range(0, len(lsTr), 2):
+        if lsTr[i] != lsTr[i + 1]:
+            allduplicated = False
+    if allduplicated == False:
+        print "ERROR: triangles are NOT duplicated :/"
+        return lsTr
+    else:
+        # print "ERROR: all triangles are duplicated. Will fix that automatically to continue..."
+        return lsTr[0:len(lsTr):2]
+
 
 if __name__ == '__main__':
     main()
