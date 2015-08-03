@@ -9,7 +9,8 @@ from shapely.ops import polygonize
 from shapely.ops import cascaded_union
 
 
-INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
+# INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
+INFILE = '/Users/hugo/data/3dtop10nl/37ez1.gdb'
 LAYERS = ['terreinVlak_3D_LOD0', 'wegdeelVlak_3D_LOD0', 'waterdeelVlak_3D_LOD0']
 # print fiona.listlayers(INFILE)
 
