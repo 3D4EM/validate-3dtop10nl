@@ -6,6 +6,7 @@ from shapely.geometry import Polygon
 from shapely.geometry import asShape
 from shapely.geometry import mapping
 from shapely.ops import polygonize
+from shapely.ops import cascaded_union
 
 
 INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
@@ -107,7 +108,7 @@ def validate_triangles(lsPolys):
 def validate_regions(lsPolys):
     #-- validate individually each top10 polygon
     invalidmp = 0
-    toprocess = [57]
+    toprocess = [7,8]
     for i in toprocess:
     # for i in range(len(lsPolys)):
         print "----------- Validate MultiPolygon #%d ----------" % (i)
@@ -187,10 +188,46 @@ def validate_one_region(mp):
         t = each.split('-')
         boundary.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
     a = list(polygonize(boundary))    
-    print type(a)
+    print a
+    print a[0]
+    print a[1]
     # if len(list(polygonize(boundary))) > 1:
         # print "ERROR: disconnected area"
         # isValid = False
+
+
+    # u = []
+    # for tr in lsTr:
+    #     # print lsNodes[tr[0]][0], lsNodes[tr[0]][1]
+    #     p = Polygon([(lsNodes[tr[0]][0], lsNodes[tr[0]][1]), 
+    #                  (lsNodes[tr[1]][0], lsNodes[tr[1]][1]), 
+    #                  (lsNodes[tr[2]][0], lsNodes[tr[2]][1])])
+    #     print p
+    #     u.append(p)
+    # print u
+    # re = cascaded_union(u)
+    # # print "empty?", re.is_empty
+    # print re
+    # # print type(re)
+    # # print list(re)
+
+    #-- try to GEOS polygonize() but that's a bit tricky actually
+    # boundaryids = []
+    # for k in d:
+    #     if ( (d[k] == -1) or (d[k] == 1) ):
+    #         boundaryids.append(k)
+    # boundary = []
+    # for each in boundaryids:
+    #     t = each.split('-')
+    #     boundary.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
+    # a = list(polygonize(boundary))    
+    # print a
+    # print a[0]
+    # print a[1]
+    # # if len(list(polygonize(boundary))) > 1:
+    #     # print "ERROR: disconnected area"
+    #     # isValid = False
+
     return isValid
 
 
