@@ -179,18 +179,24 @@ def validate_one_region(mp):
                 else:
                     d[k] = -1
 
-    boundaryids = []
-    for k in d:
-        if ( (d[k] == -1) or (d[k] == 1) ):
-            boundaryids.append(k)
+    # boundaryids = []
+    # for k in d:
+    #     if ( (d[k] == -1) or (d[k] == 1) ):
+    #         boundaryids.append(k)
+    # print boundaryids
+
+
+
+
     boundary = []
     for each in boundaryids:
         t = each.split('-')
         boundary.append( [[lsNodes[int(t[0])][0], lsNodes[int(t[0])][1]], [lsNodes[int(t[1])][0], lsNodes[int(t[1])][1]]] )
+
     a = list(polygonize(boundary))    
     print a
-    print a[0]
-    print a[1]
+    # print a[0]
+    # print a[1]
     # if len(list(polygonize(boundary))) > 1:
         # print "ERROR: disconnected area"
         # isValid = False
