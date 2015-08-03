@@ -1,7 +1,5 @@
 
-# Some preliminary comments about the validation of the 3DTOP10NL
-
-
+# Some comments about the validation of the 3DTOP10NL
 
 
 ## ALL triangles are duplicated
@@ -93,6 +91,19 @@ What is the rule to decide where to split input polygons?
 
 
 ## Some results
+
+```
+Input file /Users/hugo/data/3dtop10nl/37ez1.gdb
+Processing layer 'terreinVlak_3D_LOD0'
+# MultiPolygons: 3540
+# triangles: 1346806
+# invalid triangle(s): 0
+# vertical triangle(s): 284
+
+
+```
+
+
 
 
 
