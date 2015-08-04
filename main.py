@@ -15,6 +15,8 @@ INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
 LAYERS = ['terreinVlak_3D_LOD0']
 # LAYERS = ['terreinVlak_3D_LOD0', 'wegdeelVlak_3D_LOD0', 'waterdeelVlak_3D_LOD0']
 
+#-- merging MultiPolygons based on 'TOP10_NL': False to disable
+MERGEFEATURES = True
 
 ###############################################################################
 
@@ -25,51 +27,64 @@ def main():
         c = fiona.open(INFILE, 'r', driver='OpenFileGDB', layer=l)
         #-- store the geometries in a list (shapely objects)
         lsPolys = []
-        for each in c:
-            lsPolys.append(asShape(each['geometry']))
-        # #-- Find and print the number of geometries
-        # print "# MultiPolygons:", len(c)
+        dPolys = {}
+    
+        for gid, each in enumerate(c):
+            if MERGEFEATURES is True:
+                k = each['properties']['TOP10_ID']
+            else:
+                k = gid
+            if k not in dPolys:
+                dPolys[k] = [asShape(each['geometry'])]
+            else:
+                dPolys[k].append(asShape(each['geometry']))
+
+        #-- Find and print the number of geometries
+        # print "# MultiPolygons:", len(dPolys)
         # totaltr = 0
-        # for mp in lsPolys:
-        #     totaltr += len(mp)
+        # for tid in dPolys:
+        #     for each in dPolys[tid]:
+        #         totaltr += len(each)
         # print "# triangles:", totaltr
-        
-        # validate_triangles(lsPolys)
-        # vertical_triangles(lsPolys)
-        validate_regions(lsPolys)
+
+        # validate_triangles(dPolys)
+        # vertical_triangles(dPolys)
+        validate_regions(dPolys)
 
 
-def vertical_triangles(lsPolys):
+def vertical_triangles(dPolys):
     verticaltr = 0
-    for mp in lsPolys:
-        for p in mp:
-            if (p.area == 0.0): #-- since shapely's area() ignores Z values
-                verticaltr += 1
+    for tid in dPolys:
+        for mp in dPolys[tid]:
+            for p in mp:
+                if (p.area == 0.0): #-- since shapely's area() ignores Z values
+                    verticaltr += 1
     print "# vertical triangle(s):", verticaltr
 
     
-def validate_triangles(lsPolys):
+def validate_triangles(dPolys):
     #-- validate individually each triangle
     invalidtr = 0
-    for mp in lsPolys:
-        for p in mp:
-            if (validate_one_triangle(p) == False):
-                invalidtr += 1
+    for tid in dPolys:
+        for mp in dPolys[tid]:
+            for p in mp:
+                if (validate_one_triangle(p) == False):
+                    invalidtr += 1
     print "# invalid triangle(s):", invalidtr
 
 
-def validate_regions(lsPolys):
+def validate_regions(dPolys):
     #-- validate individually each top10 polygon
     invalidmp = 0
     invalidlist = []
     # toprocess = range(100)
-    toprocess = [17,26,36,43,74]
-    for i in toprocess:
-    # for i in range(len(lsPolys)):
-        print "----------- Validate MultiPolygon #%d ----------" % (i)
-        if (validate_one_region(lsPolys[i]) == False):
+    # toprocess = ['125232222', '125231986', '124798131']
+    # for tid in toprocess:
+    for tid in dPolys:
+        print "----------- Validate #%s ----------" % (tid)
+        if (validate_one_region(dPolys[tid]) == False):
             invalidmp += 1
-            invalidlist.append(i)
+            invalidlist.append(tid)
     print "\n"
     print "=" * 40
     print "# invalid region(s):", invalidmp
@@ -84,22 +99,22 @@ def validate_one_triangle(tr):
     return True
 
 
-def validate_one_region(mp):
+def validate_one_region(lsmp):
     isValid = True
     lsNodes = []
     lsTr = []
-    for p in mp:
-        tr = []
-        for i in range(3):
-            temp = Point3d(p.exterior.coords[i][0], p.exterior.coords[i][1], p.exterior.coords[i][2])
-            if lsNodes.count(temp) == 0:
-                lsNodes.append(temp)
-                temp.id = len(lsNodes) - 1
-                tr.append(temp.id)
-            else:
-                tr.append(lsNodes.index(temp))
-        lsTr.append(tr)
-    
+    for mp in lsmp:
+        for p in mp:
+            tr = []
+            for i in range(3):
+                temp = Point3d(p.exterior.coords[i][0], p.exterior.coords[i][1], p.exterior.coords[i][2])
+                if lsNodes.count(temp) == 0:
+                    lsNodes.append(temp)
+                    temp.id = len(lsNodes) - 1
+                    tr.append(temp.id)
+                else:
+                    tr.append(lsNodes.index(temp))
+            lsTr.append(tr)
     lsTr = remove_duplicate_triangles(lsTr)
 
     # #-- fuck up the lsTr for testing purposes
@@ -149,7 +164,6 @@ def validate_one_region(mp):
         if re.geom_type != 'Polygon':
             print "ERROR: disconnected area"
             isValid = False
-
     return isValid
 
 
