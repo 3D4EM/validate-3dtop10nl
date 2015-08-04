@@ -78,6 +78,11 @@ However, at some places the splitting went not as planned, eg for tile `25ez1` w
 
 ![](2015-08-04 at 09.34.png)
 
+and even overlapping triangles at some location:
+
+![](2015-08-04 at 09.49.png)
+
+Merging the parts based on the `TOP10_ID` obviously doesn't work for these cases.
 
 
 ## how are polygons are the border handled?
