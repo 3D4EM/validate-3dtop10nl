@@ -12,7 +12,7 @@ from shapely.ops import cascaded_union
 INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
 # INFILE = '/Users/hugo/data/3dtop10nl/37ez1.gdb'
 
-LAYERS = ['terreinVlak_3D_LOD0']
+LAYERS = ['wegdeelVlak_3D_LOD0']
 # LAYERS = ['terreinVlak_3D_LOD0', 'wegdeelVlak_3D_LOD0', 'waterdeelVlak_3D_LOD0']
 
 #-- merging MultiPolygons based on 'TOP10_NL': False to disable
@@ -39,7 +39,7 @@ def main():
             else:
                 dPolys[k].append(asShape(each['geometry']))
 
-        #-- Find and print the number of geometries
+        # # -- Find and print the number of geometries
         # print "# MultiPolygons:", len(dPolys)
         # totaltr = 0
         # for tid in dPolys:
@@ -79,8 +79,9 @@ def validate_regions(dPolys):
     invalidlist = []
     # toprocess = range(100)
     # toprocess = ['125232222', '125231986', '124798131']
-    # for tid in toprocess:
-    for tid in dPolys:
+    toprocess = ['117116312']
+    for tid in toprocess:
+    # for tid in dPolys:
         print "----------- Validate #%s ----------" % (tid)
         if (validate_one_region(dPolys[tid]) == False):
             invalidmp += 1
@@ -117,6 +118,9 @@ def validate_one_region(lsmp):
             lsTr.append(tr)
     lsTr = remove_duplicate_triangles(lsTr)
 
+    # print lsNodes
+    # print lsTr
+
     # #-- fuck up the lsTr for testing purposes
     # b = [ lsTr[4][0], lsTr[4][2], lsTr[4][1] ]
     # lsTr.append(b)
@@ -133,18 +137,24 @@ def validate_one_region(lsmp):
                     if d[k] == -1:
                         d[k] = 0
                     else:
-                        print "ERROR: duplicate edge"
+                        print "ERROR: duplicate edge (%s)" % k
+                        print lsNodes[a]
+                        print lsNodes[b]
                         isValid = False
                         d[k] = 999
                 else:
                     d[k] = 1
             else: #-- reverse order
                 k = str(b) + "-" + str(a)
+                # print k
                 if k in d: 
+                    # print d[k]
                     if d[k] == 1:
                         d[k] = 0
                     else:
-                        print "ERROR: duplicate edge"
+                        print "ERROR: duplicate edge (%s)" % k
+                        print lsNodes[b]
+                        print lsNodes[a]
                         isValid = False
                         d[k] = 999
                 else:
