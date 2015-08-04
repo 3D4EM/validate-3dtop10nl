@@ -46,13 +46,27 @@ I think we should aim at avoid long and skinny triangles, especially if we want 
 ![](2015-08-03 at 08.27 2x.png)
 
 
-## Vertical triangles
+## Vertical triangles have often the wrong orientation
 
 I count 380 of them in the tile `25ez1` for the class `terreinVlak_3D_LOD0` (out of 1,173,848). 
 Will these only happen at the borders (where 2 different classes are adjacent) of polygons of top10nl?
 Or can they also be in the middle of a polygon? 
 I assume only for 2 different classes, and if it is so, what is the rule, to which class is the vertical triangle assigned?
 
+These vertical are the source of a lot of problems since their orientation is often not consistent with the other triangles.
+See for instance that simple example (tile `25ez1`, `waterdeelVlak_3D_LOD0`, `117116312`), where we see 5 triangles.
+In the GDB there 14 triangles since 2 are vertical (and we don't see them) and they are all duplicated.
+
+![](2015-08-04 at 15.022.png)
+![](2015-08-04 at 15.02.png)
+
+The orientation of the vertical ones is not consistent with the 5 others (orientation is either Clockwise (CW) or Counterclockwise (CCW)) and that's makes it impossible to construct a topological structure from them.
+
+I first thought that all vertical triangles were wrongly oriented, so I tried to swap the vertical ones.
+That worked for some cases, but not for all and also created more problems at other places.
+If there is a logic for the orientation of the vertical triangles, then please tell me I could fix them.
+If not, then it's also possible to fix, but a bit more involved it is.
+I haven't double-check everything, but it seems that if there is a wrong triangulation for a region, this region has always one or more vertical triangles.
 
 ## TOP10NL polygons are arbitrarily split into several features while triangulating
 
