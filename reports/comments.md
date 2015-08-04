@@ -84,18 +84,6 @@ See that the unconnected parts are actually coming from a (connected) polygon in
 
 ![](2015-08-03 at 14.24.png)
 
-<!-- However, at some places the splitting went not as planned, eg for tile `25ez1` with `TOP10_ID=125232222` there are parts not triangulated:
-
-![](2015-08-04 at 09.32.png)
-
-![](2015-08-04 at 09.34.png)
-
-and even overlapping triangles at some location:
-
-![](2015-08-04 at 09.49.png)
-
-Merging the parts based on the `TOP10_ID` obviously doesn't work for these cases. -->
-
 
 ## how are polygons are the border handled?
 
