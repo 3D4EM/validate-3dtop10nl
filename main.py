@@ -1,3 +1,4 @@
+
 import sys
 import os
 import fiona
@@ -15,8 +16,8 @@ INFILE = '/Users/hugo/data/3dtop10nl/25ez1.gdb'
 LAYERS = ['wegdeelVlak_3D_LOD0']
 # LAYERS = ['terreinVlak_3D_LOD0', 'wegdeelVlak_3D_LOD0', 'waterdeelVlak_3D_LOD0']
 
-#-- merging MultiPolygons based on 'TOP10_NL': False to disable
-MERGEFEATURES = True
+REPAIR = True        #-- automatic repair when possible
+MERGEFEATURES = True #-- merging MultiPolygons based on 'TOP10_NL'
 
 ###############################################################################
 
@@ -79,9 +80,9 @@ def validate_regions(dPolys):
     invalidlist = []
     # toprocess = range(100)
     # toprocess = ['125232222', '125231986', '124798131']
-    toprocess = ['117116312']
-    for tid in toprocess:
-    # for tid in dPolys:
+    # toprocess = ['117116312', '125230993', '117198224']
+    # for tid in toprocess:
+    for tid in dPolys:
         print "----------- Validate #%s ----------" % (tid)
         if (validate_one_region(dPolys[tid]) == False):
             invalidmp += 1
@@ -104,6 +105,7 @@ def validate_one_region(lsmp):
     isValid = True
     lsNodes = []
     lsTr = []
+    vertical = False
     for mp in lsmp:
         for p in mp:
             tr = []
@@ -115,8 +117,17 @@ def validate_one_region(lsmp):
                     tr.append(temp.id)
                 else:
                     tr.append(lsNodes.index(temp))
+            if (p.area == 0.0):
+                vertical = True
+            # if REPAIR == True: #-- swap orientation of vertical triangles
+            #     if (p.area == 0.0):
+            #         tr[0],tr[1] = tr[1], tr[0]
             lsTr.append(tr)
-    lsTr = remove_duplicate_triangles(lsTr)
+
+    # if vertical == True:
+        # print '*************'
+    if REPAIR == True:
+        lsTr = remove_duplicate_triangles(lsTr)
 
     # print lsNodes
     # print lsTr
