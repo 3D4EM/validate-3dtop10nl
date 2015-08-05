@@ -107,7 +107,17 @@ And another one for the `waterdeelVlak_3D_LOD0`:
 What is the rule to decide where to split input polygons?
 
 
-## Some results
+## ALL the buildings are geometrically invalid
+
+I've tried 3 tiles, and *zero* building is valid.
+The good news is that they all have exactly *one* error: all their faces have the wrong orientation (normals are pointing inwards).
+All the rest is okay; thus easy to solve.
+That could be an [OpenFileGDB](http://www.gdal.org/drv_openfilegdb.html) problem though.
+
+![](2015-08-05 at 20.20.png)
+
+
+## Some numbers
 
 For the tile `37ez1.gdb`:
 
