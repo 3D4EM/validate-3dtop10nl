@@ -13,9 +13,10 @@ Luckily it's always one after the other, so automatic cleaning is easy.
 All my results below implies that I first jettison the duplicates.
 
 
-## often big parts are missing 
+## often big parts of tiles are missing 
 
-eg the rectangular areas in tile `37ez1`. Why is that? Is it "normal"?
+eg the rectangular areas in tile `37ez1` (observe that this is not the whole tile, only a rectangular part of one).
+Why is that? Is it "normal"?
 
 ![](2015-07-24 at 09.56.png)
 
@@ -112,7 +113,7 @@ What is the rule to decide where to split input polygons?
 I've tried 3 tiles, and *zero* building is valid.
 The good news is that they all have exactly *one* error: all their faces have the wrong orientation (normals are pointing inwards).
 All the rest is okay; thus easy to solve.
-That could be an [OpenFileGDB](http://www.gdal.org/drv_openfilegdb.html) problem though.
+That could be an [OpenFileGDB](http://www.gdal.org/drv_openfilegdb.html) issue though, ie perhaps the reader flips all the polygons (but I doubt it, to be checked in ArcGIS).
 
 ![](2015-08-05 at 20.20.png)
 
