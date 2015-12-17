@@ -15,10 +15,11 @@ All my results below implies that I first jettison the duplicates.
 
 ## often big parts of tiles are missing 
 
-eg the rectangular areas in tile `37ez1` (observe that this is not the whole tile, only a rectangular part of one).
+eg the rectangular areas in tiles `37ez1` and `37en1` (observe that this is not the whole tile, only a rectangular part of one).
 Why is that? Is it "normal"?
 
 ![](2015-07-24 at 09.56.png)
+![](2015-12-17 at 08.50.png)
 
 
 ## some classes don't have polygons and/or triangles
