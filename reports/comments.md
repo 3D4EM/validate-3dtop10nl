@@ -18,8 +18,8 @@ All my results below implies that I first jettison the duplicates.
 eg the rectangular areas in tiles `37ez1` and `37en1` (observe that this is not the whole tile, only a rectangular part of one).
 Why is that? Is it "normal"?
 
-![](2015-07-24 at 09.56.png)
-![](2015-12-17 at 08.50.png)
+![](2015-07-24at09.56.png)
+![](2015-12-17at08.50.png)
 
 
 ## some classes don't have polygons and/or triangles
@@ -31,7 +31,7 @@ In tile `37en1`/`37ez1`, unlike `25ez1` have features in `brugWeg`/`terreinOnder
 these are *not* triangulated.
 Where are the triangles?
 
-![](2015-07-24 at 09.57.png)
+![](2015-07-24at09.57.png)
 
 
 ## triangulation has several long and skinny triangles
@@ -40,12 +40,12 @@ Especially in water area, there are sometimes regular patterns where (unnecessar
 Also, are these Steiner points or they are left from the simplification of the AHN2 points?
 I think we should aim at avoid long and skinny triangles, especially if we want to distribute in GML (or another TXT format), then the precision could become an issue for users.
 
-![](2015-08-03 at 08.19.png)
+![](2015-08-03at08.19.png)
 
 
 ## features have ITC attributes
 
-![](2015-08-03 at 08.27 2x.png)
+![](2015-08-03at08.27 2x.png)
 
 
 ## Vertical triangles have often the wrong orientation
@@ -59,8 +59,8 @@ These vertical are the source of a lot of problems since their orientation is of
 See for instance that simple example (tile `25ez1`, `waterdeelVlak_3D_LOD0`, `117116312`), where we see 5 triangles.
 In the GDB there 14 triangles since 2 are vertical (and we don't see them) and they are all duplicated.
 
-![](2015-08-04 at 15.022.png)
-![](2015-08-04 at 15.02.png)
+![](2015-08-04at15.022.png)
+![](2015-08-04at15.02.png)
 
 The orientation of the vertical ones is not consistent with the 5 others (orientation is either Clockwise (CW) or Counterclockwise (CCW)) and that's makes it impossible to construct a topological structure from them.
 
@@ -75,35 +75,35 @@ I haven't double-check everything, but it seems that if there is a wrong triangu
 I can't figure out the rules, but the splitting creates unconnected parts (which we do not want I assume).
 See for example these:
 
-![](2015-08-03 at 08.33 2x.png)
+![](2015-08-03at08.33 2x.png)
 
-![](2015-08-03 at 14.21.png)
+![](2015-08-03at14.21.png)
 
 These could be easily fixed because the `TOP10_ID` for each feature is kept, and we could merge these.
 See that the unconnected parts are actually coming from a (connected) polygon in the original TOP10NL:
 
-![](2015-08-03 at 14.22.png)
+![](2015-08-03at14.22.png)
 
-![](2015-08-03 at 14.24.png)
+![](2015-08-03at14.24.png)
 
 
 ## how are polygons are the border handled?
 
 In tile `25ez1` there are these cases:
 
-![](2015-08-03 at 14.26.png)
+![](2015-08-03at14.26.png)
 
-![](2015-08-03 at 14.27.png)
+![](2015-08-03at14.27.png)
 
 And at the border of 2 other tiles:
 
-![](2015-08-03 at 14.36.png)
-![](2015-08-03 at 14.38.png)
-![](2015-08-03 at 14.382.png)
+![](2015-08-03at14.36.png)
+![](2015-08-03at14.38.png)
+![](2015-08-03at14.382.png)
 
 And another one for the `waterdeelVlak_3D_LOD0`:
 
-![](2015-08-04 at 10.55.png)
+![](2015-08-04at10.55.png)
 
 
 What is the rule to decide where to split input polygons?
@@ -116,7 +116,7 @@ The good news is that they all have exactly *one* error: all their faces have th
 All the rest is okay; thus easy to solve.
 That could be an [OpenFileGDB](http://www.gdal.org/drv_openfilegdb.html) issue though, ie perhaps the reader flips all the polygons (but I doubt it, to be checked in ArcGIS).
 
-![](2015-08-05 at 20.20.png)
+![](2015-08-05at20.20.png)
 
 
 ## Some numbers
